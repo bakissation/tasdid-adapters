@@ -1,0 +1,84 @@
+{
+  "name": "@bakissation/tasdid-adapters",
+  "version": "0.0.0-semantically-released",
+  "description": "Lightweight, vendor-agnostic framework bindings for @bakissation/tasdid — mount the SATIM payment lifecycle (start/return/reconcile/refund) on the Web Fetch API: Next.js App Router, Hono, Remix, SvelteKit, Cloudflare Workers, Bun, Deno.",
+  "author": "Abdelbaki Berkati (@bakissation)",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": { "types": "./dist/index.d.ts", "default": "./dist/index.js" },
+      "require": { "types": "./dist/index.d.cts", "default": "./dist/index.cjs" }
+    },
+    "./fetch": {
+      "import": { "types": "./dist/fetch.d.ts", "default": "./dist/fetch.js" },
+      "require": { "types": "./dist/fetch.d.cts", "default": "./dist/fetch.cjs" }
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "@bakissation/tasdid": "^1.2.0",
+    "@bakissation/dinar": "^1.1.0"
+  },
+  "devDependencies": {
+    "@bakissation/dinar": "^1.1.0",
+    "@bakissation/satim": "^2.0.0",
+    "@bakissation/satim-testing": "^1.0.1",
+    "@bakissation/tasdid": "^1.2.0",
+    "@eslint/js": "^9.18.0",
+    "@types/node": "^20.10.0",
+    "eslint": "^9.18.0",
+    "semantic-release": "^25.0.3",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3",
+    "typescript-eslint": "^8.20.0",
+    "vitest": "^1.2.0"
+  },
+  "keywords": [
+    "algeria",
+    "satim",
+    "cib",
+    "edahabia",
+    "payment",
+    "tasdid",
+    "adapter",
+    "nextjs",
+    "fetch",
+    "hono",
+    "fintech",
+    "typescript"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bakissation/tasdid-adapters.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bakissation/tasdid-adapters/issues"
+  },
+  "homepage": "https://github.com/bakissation/tasdid-adapters#readme"
+}
