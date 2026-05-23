@@ -87,6 +87,11 @@ function mapError(err: unknown, onError?: PaymentHandlersOptions['onError']): Ge
   return { status: 500, body: { error: 'Internal error' } };
 }
 
+/** A safe, enumerable reason for a sweep failure — our error taxonomy, never gateway internals. */
+function failureCode(err: unknown): TasdidErrorCode | 'UNKNOWN' {
+  return err instanceof TasdidError ? err.code : 'UNKNOWN';
+}
+
 /** JSON-safe view of a PaymentResult (Dinar → exact centimes + a formatted string). */
 function serialize(r: PaymentResult): Record<string, unknown> {
   return {
@@ -171,7 +176,10 @@ export function createPaymentHandlers(checkout: Checkout, opts: PaymentHandlersO
         const summary = await reconcilePending(checkout, opts.store, { limit: opts.sweepLimit });
         // drop the heavy `results`/Dinar payloads — return the operational counts only
         const { results: _results, failures, ...counts } = summary;
-        return { status: 200, body: { ...counts, failures: failures.map((f) => ({ paymentId: f.paymentId })) } };
+        return {
+          status: 200,
+          body: { ...counts, failures: failures.map((f) => ({ paymentId: f.paymentId, code: failureCode(f.error) })) },
+        };
       } catch (err) {
         return mapError(err, opts.onError);
       }

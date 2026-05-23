@@ -68,6 +68,20 @@ describe('reconcile', () => {
     expect(body).not.toHaveProperty('results');
   });
 
+  it('tags each failure with a safe code when a status query throws', async () => {
+    const { pay, satim } = setup();
+    await pay.start(post('/api/pay', order));
+    satim.getOrderStatus = async () => {
+      throw new Error('gateway unreachable');
+    };
+    const res = await pay.reconcile(get('/reconcile'));
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.failures).toHaveLength(1);
+    expect(body.failures[0].paymentId).toBeTruthy();
+    expect(body.failures[0].code).toBe('UNKNOWN');
+  });
+
   it('401 when authorize rejects', async () => {
     const { pay } = setup({ handlers: { authorize: () => false } });
     expect((await pay.reconcile(get('/reconcile'))).status).toBe(401);
