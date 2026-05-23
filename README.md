@@ -67,6 +67,10 @@ It returns operational counts (`paid`/`failed`/`expired`/`refunded`/`stillPendin
 // Hono / Workers / Bun / Deno
 app.post('/api/pay', (c) => pay.start(c.req.raw));
 app.get('/api/pay/return', (c) => pay.handleReturn(c.req.raw));
+
+// React Router v7 / Remix — resource routes ({ request } is a Web Request)
+export const action = ({ request }) => pay.start(request);        // app/routes/api.pay.tsx
+export const loader = ({ request }) => pay.handleReturn(request); // app/routes/api.pay.return.tsx
 ```
 
 ## Express / Connect / Fastify (Node `http`)
@@ -86,6 +90,10 @@ app.post('/api/pay/refund',    pay.refund);
 
 // Fastify — pass the parsed body and hijack the reply (Fastify drains req.raw)
 fastify.post('/api/pay', (req, reply) => { reply.hijack(); return pay.start(req.raw, reply.raw, { body: req.body }); });
+
+// NestJS rides /node. Express platform (default) — req/res are the native objects:
+@Post() start(@Req() req: Request, @Res() res: Response) { return pay.start(req, res); }
+// Fastify platform — hijack + raw: res.hijack(); return pay.start(req.raw, res.raw, { body: req.body });
 ```
 
 ## Options
@@ -102,7 +110,7 @@ Errors map by code: `INVALID_INPUT → 400`, `NOT_FOUND → 404`, refund/transit
 
 ## Footprint
 
-Zero framework dependency. Peers: `@bakissation/tasdid` + `@bakissation/dinar` (you already have them). One package, subpath entries — `/fetch` (Next.js App Router, Hono, Remix, SvelteKit, Workers, Bun, Deno) + `/node` (Express, Connect, Fastify), same headless core (the `.` export, `createPaymentHandlers`).
+Zero framework dependency. Peers: `@bakissation/tasdid` + `@bakissation/dinar` (you already have them). One package, subpath entries — `/fetch` (Next.js App Router, Hono, Remix / React Router v7, SvelteKit, Workers, Bun, Deno) + `/node` (Express, Connect, Fastify, NestJS), same headless core (the `.` export, `createPaymentHandlers`).
 
 ## License
 
