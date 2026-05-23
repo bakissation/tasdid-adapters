@@ -69,6 +69,25 @@ app.post('/api/pay', (c) => pay.start(c.req.raw));
 app.get('/api/pay/return', (c) => pay.handleReturn(c.req.raw));
 ```
 
+## Express / Connect / Fastify (Node `http`)
+
+Not Fetch-native? The `/node` entry binds to Node's `http` (`IncomingMessage` → `ServerResponse`) — same handlers, same core, still zero framework deps.
+
+```ts
+import { createNodeHandlers } from '@bakissation/tasdid-adapters/node';
+const pay = createNodeHandlers(checkout, { successUrl: '/thanks', failUrl: '/payment-failed', store, authorize });
+
+// Express / Connect — req/res are Node's objects, so mount directly
+app.use(express.json());
+app.post('/api/pay',           pay.start);
+app.get ('/api/pay/return',    pay.handleReturn);
+app.get ('/api/pay/reconcile', pay.reconcile);
+app.post('/api/pay/refund',    pay.refund);
+
+// Fastify — pass the parsed body and hijack the reply (Fastify drains req.raw)
+fastify.post('/api/pay', (req, reply) => { reply.hijack(); return pay.start(req.raw, reply.raw, { body: req.body }); });
+```
+
 ## Options
 
 | Option | |
@@ -83,7 +102,7 @@ Errors map by code: `INVALID_INPUT → 400`, `NOT_FOUND → 404`, refund/transit
 
 ## Footprint
 
-Zero framework dependency. Peers: `@bakissation/tasdid` + `@bakissation/dinar` (you already have them). One package, subpath entries — `/fetch` now; `/node` (Express/Connect/Fastify) later, same headless core (the `.` export, `createPaymentHandlers`).
+Zero framework dependency. Peers: `@bakissation/tasdid` + `@bakissation/dinar` (you already have them). One package, subpath entries — `/fetch` (Next.js App Router, Hono, Remix, SvelteKit, Workers, Bun, Deno) + `/node` (Express, Connect, Fastify), same headless core (the `.` export, `createPaymentHandlers`).
 
 ## License
 
