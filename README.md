@@ -59,6 +59,8 @@ SATIM has **no webhooks**, so a periodic sweep is how abandoned/expired orders s
 curl -H "Authorization: Bearer $PAY_ADMIN_TOKEN" https://yourapp/api/pay/reconcile
 ```
 
+It returns operational counts (`paid`/`failed`/`expired`/`refunded`/`stillPending`) plus a `failures` list — each `{ paymentId, code }`, where `code` is a safe reason (e.g. `REFUND_FAILED`, or `UNKNOWN`) so you can triage a sweep without leaking gateway internals.
+
 ## Other runtimes (same handlers)
 
 ```ts
