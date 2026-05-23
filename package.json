@@ -16,6 +16,10 @@
     "./fetch": {
       "import": { "types": "./dist/fetch.d.ts", "default": "./dist/fetch.js" },
       "require": { "types": "./dist/fetch.d.cts", "default": "./dist/fetch.cjs" }
+    },
+    "./node": {
+      "import": { "types": "./dist/node.d.ts", "default": "./dist/node.js" },
+      "require": { "types": "./dist/node.d.cts", "default": "./dist/node.cjs" }
     }
   },
   "files": [
